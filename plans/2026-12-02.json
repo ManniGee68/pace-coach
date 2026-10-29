@@ -1,0 +1,14 @@
+{
+  "id": "plan-2026-12-02",
+  "name": "Easy + Strides Di 2. Dez",
+  "createdAt": "2026-10-29",
+  "segments": [
+    {
+      "id": "seg-1",
+      "name": "Easy Run + Strides 25 min",
+      "distance": 4.3,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    }
+  ]
+}

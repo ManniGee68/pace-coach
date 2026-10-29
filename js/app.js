@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.2.0';
+  const APP_VERSION = 'v0.3.0';
 
   /* ================= State ================= */
   function freshRun() {
@@ -682,6 +682,32 @@
     });
   }
 
+  /* ================= URL-Plan-Import ================= */
+  // ?plan=2026-11-04 → lädt plans/2026-11-04.json und öffnet Pre-Run direkt
+  function handleUrlPlan() {
+    const slug = new URLSearchParams(window.location.search).get('plan');
+    if (!slug) return;
+    // Schon vorhanden? Dann direkt öffnen
+    const existing = state.plans.find(function (p) { return p.id === 'plan-' + slug; });
+    if (existing) { openPrerun(existing.id); return; }
+    const url = 'plans/' + slug + '.json';
+    fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('Plan nicht gefunden (' + slug + ')');
+        return r.json();
+      })
+      .then(function (data) {
+        PlanManager.save(data);
+        state.plans = PlanManager.getAll();
+        renderPlans();
+        toast('Plan \u201e' + data.name + '\u201c geladen', 'ok');
+        openPrerun(data.id);
+      })
+      .catch(function (err) {
+        console.warn('URL-Plan-Import:', err);
+      });
+  }
+
   /* ================= Init ================= */
   function init() {
     loadData();
@@ -690,6 +716,7 @@
     renderLog();
     show('plans');
     $('app-version').textContent = APP_VERSION;
+    handleUrlPlan();
     if (!Voice.isSupported()) {
       setTimeout(function () { toast('Sprachausgabe wird von diesem Browser nicht unterstützt.', 'error'); }, 500);
     }

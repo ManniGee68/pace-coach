@@ -1,0 +1,14 @@
+{
+  "id": "plan-2026-11-23",
+  "name": "Langer Lauf So 23. Nov",
+  "createdAt": "2026-10-29",
+  "segments": [
+    {
+      "id": "seg-1",
+      "name": "Langer Lauf 70 min",
+      "distance": 11.0,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    }
+  ]
+}

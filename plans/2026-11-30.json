@@ -1,0 +1,21 @@
+{
+  "id": "plan-2026-11-30",
+  "name": "Progression So 30. Nov",
+  "createdAt": "2026-10-29",
+  "segments": [
+    {
+      "id": "seg-1",
+      "name": "Erster Teil 25 min @ 6:15",
+      "distance": 4.0,
+      "targetPaceMin": 6,
+      "targetPaceSec": 15
+    },
+    {
+      "id": "seg-2",
+      "name": "Zweiter Teil 25 min @ 5:28",
+      "distance": 4.6,
+      "targetPaceMin": 5,
+      "targetPaceSec": 28
+    }
+  ]
+}

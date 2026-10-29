@@ -1,0 +1,28 @@
+{
+  "id": "plan-2026-11-18",
+  "name": "Intervall Di 18. Nov",
+  "createdAt": "2026-10-29",
+  "segments": [
+    {
+      "id": "seg-1",
+      "name": "Warm-Up 15 min",
+      "distance": 2.4,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-2",
+      "name": "6×800m @ 4:45 /km",
+      "distance": 6.3,
+      "targetPaceMin": 5,
+      "targetPaceSec": 0
+    },
+    {
+      "id": "seg-3",
+      "name": "Cool-Down 10 min",
+      "distance": 1.6,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    }
+  ]
+}
