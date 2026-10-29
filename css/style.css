@@ -293,3 +293,10 @@ table.data th.r, table.data td.r { text-align: right; }
 /* Laufkarte */
 .run-map { height: 240px; border-radius: 12px; margin: 0 0 16px; overflow: hidden; background: #111; }
 .run-map.hidden { display: none; }
+
+/* Pace-Eingabe: zwei Felder (Min / Sek) */
+.pace-inputs { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.pace-inputs .seg-pace-min { width: 56px; text-align: center; }
+.pace-inputs .seg-pace-sec { width: 52px; text-align: center; }
+.pace-sep { font-size: 1.3rem; font-weight: 700; color: var(--text); line-height: 1; }
+.pace-unit { font-size: 0.78rem; color: var(--muted); margin-left: 2px; white-space: nowrap; }

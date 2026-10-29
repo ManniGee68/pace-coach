@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.4.2';
+  const APP_VERSION = 'v0.4.3';
 
   /* ================= State ================= */
   function freshRun() {
@@ -195,8 +195,13 @@
         '<div class="seg-row">' +
         '<label class="field"><span class="field-label">Distanz (km)</span>' +
         '<input type="text" inputmode="decimal" class="seg-dist" placeholder="2,5" value="' + esc(s.distance === '' ? '' : String(s.distance).replace('.', ',')) + '"></label>' +
-        '<label class="field"><span class="field-label">Pace (MM:SS)</span>' +
-        '<input type="text" inputmode="numeric" class="seg-pace" placeholder="5:30" maxlength="5" value="' + esc(s._paceText) + '"></label>' +
+        '<div class="field"><span class="field-label">Pace /km</span>' +
+        '<div class="pace-inputs">' +
+        '<input type="number" inputmode="numeric" class="seg-pace-min" min="0" max="20" value="' + (s.targetPaceMin !== undefined ? s.targetPaceMin : 5) + '" aria-label="Minuten">' +
+        '<span class="pace-sep">:</span>' +
+        '<input type="number" inputmode="numeric" class="seg-pace-sec" min="0" max="59" value="' + String(s.targetPaceSec !== undefined ? s.targetPaceSec : 30).padStart(2, '0') + '" aria-label="Sekunden">' +
+        '<span class="pace-unit">min/km</span>' +
+        '</div></div>' +
         '<button type="button" class="seg-del" data-del="' + i + '" aria-label="Segment löschen">🗑</button>' +
         '</div></div>';
     }).join('');
@@ -213,7 +218,11 @@
       if (!s) return;
       s.name = card.querySelector('.seg-name').value;
       s.distance = card.querySelector('.seg-dist').value;
-      s._paceText = card.querySelector('.seg-pace').value;
+      const pMin = parseInt(card.querySelector('.seg-pace-min').value) || 0;
+      const pSec = Math.min(59, Math.max(0, parseInt(card.querySelector('.seg-pace-sec').value) || 0));
+      s.targetPaceMin = pMin;
+      s.targetPaceSec = pSec;
+      s._paceText = pMin + ':' + String(pSec).padStart(2, '0');
     });
   }
 
@@ -222,7 +231,9 @@
     let dist = 0, sec = 0;
     document.querySelectorAll('#editor-segments .seg-card').forEach(function (card) {
       const d = Fmt.parseKm(card.querySelector('.seg-dist').value);
-      const p = Fmt.parsePace(card.querySelector('.seg-pace').value);
+      const pMin2 = parseInt(card.querySelector('.seg-pace-min').value) || 0;
+      const pSec2 = Math.min(59, parseInt(card.querySelector('.seg-pace-sec').value) || 0);
+      const p = pMin2 * 60 + pSec2;
       if (d > 0) { dist += d; if (p) sec += d * p; }
     });
     $('editor-summary').textContent = dist > 0
@@ -261,8 +272,8 @@
         return null;
       }
       if (!pace) {
-        card.querySelector('.seg-pace').classList.add('invalid');
-        err.textContent = 'Segment ' + (i + 1) + ': Pace bitte als MM:SS eingeben (z. B. 5:30).';
+        card.querySelector('.seg-pace-min').classList.add('invalid');
+        err.textContent = 'Segment ' + (i + 1) + ': Bitte eine Pace eingeben (z. B. 5 Min 30 Sek).';
         return null;
       }
       out.push({
