@@ -499,22 +499,31 @@
 
   /* ================= Karte (Leaflet) ================= */
   function renderMap(positions, containerId) {
-    if (!positions || positions.length < 2) return;
-    if (typeof L === 'undefined') return;
     var el = document.getElementById(containerId);
     if (!el) return;
+    if (!positions || positions.length < 2) {
+      el.classList.add('hidden');
+      return;
+    }
+    if (typeof L === 'undefined') {
+      el.classList.add('hidden');
+      return;
+    }
     try {
       var latlngs = positions.map(function (p) { return [p.lat, p.lon]; });
-      var map = L.map(el, { zoomControl: true, attributionControl: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-      var route = L.polyline(latlngs, { color: '#e94560', weight: 4, opacity: 0.9 }).addTo(map);
-      L.circleMarker(latlngs[0], { radius: 8, color: '#fff', fillColor: '#4ecca3', fillOpacity: 1, weight: 2 })
-        .bindTooltip('Start').addTo(map);
-      L.circleMarker(latlngs[latlngs.length - 1], { radius: 8, color: '#fff', fillColor: '#e94560', fillOpacity: 1, weight: 2 })
-        .bindTooltip('Ziel').addTo(map);
-      map.fitBounds(route.getBounds(), { padding: [24, 24] });
+      var map = L.map(el, { zoomControl: false, attributionControl: false });
+      // CartoDB Dark Matter — passt zum App-Theme, kein CSS-Filter nötig
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19
+      }).addTo(map);
+      var route = L.polyline(latlngs, { color: '#e94560', weight: 4, opacity: 0.95 }).addTo(map);
+      L.circleMarker(latlngs[0], { radius: 9, color: '#fff', fillColor: '#4ecca3', fillOpacity: 1, weight: 2 })
+        .bindTooltip('Start', { permanent: false }).addTo(map);
+      L.circleMarker(latlngs[latlngs.length - 1], { radius: 9, color: '#fff', fillColor: '#e94560', fillOpacity: 1, weight: 2 })
+        .bindTooltip('Ziel', { permanent: false }).addTo(map);
+      map.fitBounds(route.getBounds(), { padding: [28, 28] });
     } catch (e) {
-      if (el) el.innerHTML = '<div class="muted center" style="padding:20px">Karte nicht verfügbar</div>';
+      el.innerHTML = '<div class="muted center" style="padding:20px">Karte nicht verfügbar</div>';
     }
   }
 
