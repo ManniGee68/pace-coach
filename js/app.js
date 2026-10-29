@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.4.0';
+  const APP_VERSION = 'v0.4.2';
 
   /* ================= State ================= */
   function freshRun() {
@@ -512,9 +512,10 @@
     try {
       var latlngs = positions.map(function (p) { return [p.lat, p.lon]; });
       var map = L.map(el, { zoomControl: false, attributionControl: false });
-      // CartoDB Dark Matter — passt zum App-Theme, kein CSS-Filter nötig
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19
+      // OpenStreetMap — kostenlos, kein API-Key
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
       }).addTo(map);
       var route = L.polyline(latlngs, { color: '#e94560', weight: 4, opacity: 0.95 }).addTo(map);
       L.circleMarker(latlngs[0], { radius: 9, color: '#fff', fillColor: '#4ecca3', fillOpacity: 1, weight: 2 })
