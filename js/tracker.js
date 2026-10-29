@@ -212,17 +212,17 @@
 
   function checkPaceAlert(t, distKm) {
     if (planCompleteFired) return;
-    const segDist = distKm - run.segmentStartKm;
-    if (segDist < NO_WARN_FIRST_KM) return;
+
+    // Pace dieses Kilometers: Zeit seit letzter km-Marke / Distanz seit letzter km-Marke
+    // Resettet an jeder km-Marke → kein Drift über Zeit
+    const distInKm = distKm - run.lastKmAnnounced;   // 0..1 km innerhalb dieses km
+    if (distInKm < NO_WARN_FIRST_KM) return;           // erste 200 m: Einlaufzeit
     if (run.lastWarnMs && t - run.lastWarnMs < WARN_COOLDOWN_MS) return;
 
-    // Pace nur innerhalb des aktuellen Segments bewerten (kein Nachwirken des vorigen Segments)
-    let segIdx = 0;
-    for (let i = run.positions.length - 1; i >= 0; i--) {
-      if (run.positions[i].distKm <= run.segmentStartKm) { segIdx = i; break; }
-    }
-    const pace = computePace(segIdx);
-    if (!pace) return;
+    const timeInKmMs = t - lastKmMs;
+    if (distInKm < MIN_WINDOW_KM || timeInKmMs < MIN_WINDOW_MS) return;
+    const pace = (timeInKmMs / 1000) / distInKm;       // s/km (Hochrechnung für diesen km)
+
     const target = segTarget(run.currentSegmentIdx);
     if (!target) return;
     const delta = Math.round(pace - target);
