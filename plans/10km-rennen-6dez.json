@@ -1,0 +1,11 @@
+{
+  "id": "race-10km-2026-12-06",
+  "name": "10km Rennen 6. Dez",
+  "createdAt": "2026-10-29",
+  "segments": [
+    { "id": "r-seg-1", "name": "Km 1–2 · ruhig anlaufen", "distance": 2, "targetPaceMin": 5, "targetPaceSec": 8 },
+    { "id": "r-seg-2", "name": "Km 3–7 · Renntempo",      "distance": 5, "targetPaceMin": 5, "targetPaceSec": 2 },
+    { "id": "r-seg-3", "name": "Km 8–9 · anziehen",        "distance": 2, "targetPaceMin": 4, "targetPaceSec": 58 },
+    { "id": "r-seg-4", "name": "Km 10 · alles geben 💪",   "distance": 1, "targetPaceMin": 4, "targetPaceSec": 45 }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "training-easy-2026-11-01",
+  "name": "Easy Longrun So 1. Nov",
+  "createdAt": "2026-10-29",
+  "segments": [
+    { "id": "e-seg-1", "name": "Easy Longrun 55 min", "distance": 9, "targetPaceMin": 6, "targetPaceSec": 10 }
+  ]
+}

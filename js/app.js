@@ -2,6 +2,8 @@
 (function () {
   'use strict';
 
+  const APP_VERSION = 'v0.2.0';
+
   /* ================= State ================= */
   function freshRun() {
     return {
@@ -687,6 +689,7 @@
     renderPlans();
     renderLog();
     show('plans');
+    $('app-version').textContent = APP_VERSION;
     if (!Voice.isSupported()) {
       setTimeout(function () { toast('Sprachausgabe wird von diesem Browser nicht unterstützt.', 'error'); }, 500);
     }
