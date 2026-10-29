@@ -289,3 +289,8 @@ table.data th.r, table.data td.r { text-align: right; }
 
 /* Version badge */
 .app-version { font-size: 0.65rem; opacity: 0.4; font-weight: normal; letter-spacing: 0.03em; vertical-align: middle; margin-left: 0.2rem; }
+
+/* Laufkarte */
+.run-map { height: 240px; border-radius: 12px; margin: 0 0 16px; overflow: hidden; background: #0d0d1a; }
+.run-map .leaflet-layer { filter: invert(100%) hue-rotate(180deg) brightness(0.75) contrast(1.1); }
+.run-map .leaflet-control { display: none; }

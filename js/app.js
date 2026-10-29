@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.3.0';
+  const APP_VERSION = 'v0.4.0';
 
   /* ================= State ================= */
   function freshRun() {
@@ -472,7 +472,20 @@
       avgPaceMin: Math.floor(avgPace / 60),
       avgPaceSec: Math.round(avgPace) % 60,
       kmSplits: r.kmSplits.map(function (s) { return { km: s.km, timeSeconds: s.timeSeconds }; }),
-      segmentResults: Tracker.getSegmentResults()
+      segmentResults: Tracker.getSegmentResults(),
+      positions: (function () {
+        var pts = r.positions || [];
+        if (pts.length === 0) return [];
+        // Auf max. 300 Punkte ausdünnen für localStorage
+        var step = Math.max(1, Math.floor(pts.length / 300));
+        var out = [];
+        for (var i = 0; i < pts.length; i += step) {
+          out.push({ lat: pts[i].lat, lon: pts[i].lon });
+        }
+        var last = pts[pts.length - 1];
+        if (out[out.length - 1].lat !== last.lat) out.push({ lat: last.lat, lon: last.lon });
+        return out;
+      })()
     };
     // Rundungsfall 59,6 s → 60
     if (log.avgPaceSec === 60) { log.avgPaceMin += 1; log.avgPaceSec = 0; }
@@ -482,6 +495,27 @@
     renderSummary();
     show('summary');
     Voice.onFinish(Math.round(dist * 100) / 100, totalSec, avgPace);
+  }
+
+  /* ================= Karte (Leaflet) ================= */
+  function renderMap(positions, containerId) {
+    if (!positions || positions.length < 2) return;
+    if (typeof L === 'undefined') return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    try {
+      var latlngs = positions.map(function (p) { return [p.lat, p.lon]; });
+      var map = L.map(el, { zoomControl: true, attributionControl: false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      var route = L.polyline(latlngs, { color: '#e94560', weight: 4, opacity: 0.9 }).addTo(map);
+      L.circleMarker(latlngs[0], { radius: 8, color: '#fff', fillColor: '#4ecca3', fillOpacity: 1, weight: 2 })
+        .bindTooltip('Start').addTo(map);
+      L.circleMarker(latlngs[latlngs.length - 1], { radius: 8, color: '#fff', fillColor: '#e94560', fillOpacity: 1, weight: 2 })
+        .bindTooltip('Ziel').addTo(map);
+      map.fitBounds(route.getBounds(), { padding: [24, 24] });
+    } catch (e) {
+      if (el) el.innerHTML = '<div class="muted center" style="padding:20px">Karte nicht verfügbar</div>';
+    }
   }
 
   /* ================= Screen 5: Zusammenfassung ================= */
@@ -522,7 +556,8 @@
   }
 
   function renderSummary() {
-    $('summary-content').innerHTML = resultHTML(state.pendingLog);
+    $('summary-content').innerHTML = '<div id="summary-map" class="run-map"></div>' + resultHTML(state.pendingLog);
+    renderMap(state.pendingLog && state.pendingLog.positions, 'summary-map');
   }
 
   function savePendingLog() {
@@ -587,9 +622,10 @@
     $('log-back').classList.remove('hidden');
     $('log-title').textContent = Fmt.dateDE(log.date);
     const d = $('log-detail');
-    d.innerHTML = '<h2 style="margin:4px 0 12px">' + esc(log.planName) + '</h2>' + resultHTML(log) +
+    d.innerHTML = '<div id="log-map" class="run-map"></div><h2 style="margin:4px 0 12px">' + esc(log.planName) + '</h2>' + resultHTML(log) +
       '<div class="btn-stack"><button type="button" class="btn btn-danger btn-block" data-del-log="' + esc(log.id) + '">🗑 Lauf löschen</button></div>';
     d.classList.remove('hidden');
+    renderMap(log.positions, 'log-map');
     window.scrollTo(0, 0);
   }
 
