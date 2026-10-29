@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PaceCoach">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>PaceCoach 🏃</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏃%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ 1. Plan-Liste ============ -->
+  <div class="screen" id="screen-plans">
+    <header class="app-header">
+      <h1>PaceCoach 🏃</h1>
+      <button class="btn btn-small btn-ghost" id="btn-import" type="button">⬆ Import</button>
+    </header>
+    <main class="screen-body with-nav">
+      <div id="plans-list" class="card-list"></div>
+    </main>
+    <button class="fab" id="btn-new-plan" type="button">+ Neuer Plan</button>
+  </div>
+
+  <!-- ============ 2. Plan-Editor ============ -->
+  <div class="screen" id="screen-editor">
+    <header class="app-header">
+      <button class="back-link" id="editor-back" type="button" aria-label="Zurück">‹</button>
+      <h1 id="editor-title">Neuer Plan</h1>
+    </header>
+    <main class="screen-body">
+      <label class="field">
+        <span class="field-label">Plan-Name</span>
+        <input type="text" id="editor-name" placeholder="z. B. 10km Sub-50" maxlength="60" autocomplete="off">
+      </label>
+
+      <div class="section-title">Segmente</div>
+      <div id="editor-segments"></div>
+      <button class="btn btn-secondary btn-block" id="btn-add-segment" type="button">+ Segment hinzufügen</button>
+
+      <div id="editor-summary" class="muted center mt"></div>
+      <div id="editor-error" class="error-text" role="alert"></div>
+
+      <div class="btn-stack">
+        <button class="btn btn-primary btn-block" id="btn-editor-save" type="button">Speichern</button>
+        <button class="btn btn-secondary btn-block" id="btn-editor-export" type="button">Als JSON exportieren</button>
+        <button class="btn btn-ghost btn-block" id="btn-editor-cancel" type="button">Abbrechen</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ 3. Pre-Run ============ -->
+  <div class="screen" id="screen-prerun">
+    <header class="app-header">
+      <button class="back-link" id="prerun-back" type="button" aria-label="Zurück">‹ Zurück</button>
+    </header>
+    <main class="screen-body">
+      <h1 class="plan-title" id="prerun-name"></h1>
+      <div class="stat-row">
+        <div class="stat"><div class="stat-value" id="prerun-distance">–</div><div class="stat-label">Distanz</div></div>
+        <div class="stat"><div class="stat-value" id="prerun-time">–</div><div class="stat-label">Geschätzte Zeit</div></div>
+      </div>
+      <div class="section-title">Segmente</div>
+      <div id="prerun-segments" class="card-list"></div>
+      <p class="hint">📱 Display angeschaltet lassen und Lautstärke prüfen – die Ansagen kommen per Sprache.</p>
+      <div id="prerun-gps-warning" class="error-text" role="alert"></div>
+    </main>
+    <div class="bottom-action">
+      <button class="btn btn-primary btn-xl btn-block" id="btn-start-run" type="button">▶ Starten</button>
+    </div>
+  </div>
+
+  <!-- ============ 4. Live-Lauf ============ -->
+  <div class="screen" id="screen-run">
+    <div class="run-top">
+      <div class="run-segment-row">
+        <div class="run-segment-name" id="run-segment-name">–</div>
+        <div class="run-segment-count" id="run-segment-count">1/1</div>
+      </div>
+      <div class="progress"><div class="progress-bar" id="run-progress-bar"></div></div>
+      <div class="run-segment-km muted" id="run-segment-km">0,00 / 0 km</div>
+    </div>
+
+    <div class="pace-display" id="run-pace-box">
+      <div class="pace-label">Aktuelle Pace /km</div>
+      <div class="pace-value" id="run-pace">--:--</div>
+      <div class="pace-delta" id="run-pace-delta">&nbsp;</div>
+    </div>
+
+    <div class="run-stats">
+      <div class="run-stat"><div class="run-stat-value" id="run-time">00:00</div><div class="stat-label">Gesamtzeit</div></div>
+      <div class="run-stat"><div class="run-stat-value" id="run-distance">0,00</div><div class="stat-label">Kilometer</div></div>
+    </div>
+
+    <div class="run-target">
+      Ziel-Pace: <strong id="run-target">–</strong> /km
+    </div>
+    <div class="run-status" id="run-status" role="status"></div>
+
+    <div class="run-buttons">
+      <button class="btn btn-secondary btn-xl" id="btn-pause" type="button">⏸ Pause</button>
+      <button class="btn btn-primary btn-xl" id="btn-stop" type="button">⏹ Stop</button>
+    </div>
+  </div>
+
+  <!-- ============ 5. Zusammenfassung ============ -->
+  <div class="screen" id="screen-summary">
+    <header class="app-header">
+      <h1>Lauf beendet! 🎉</h1>
+    </header>
+    <main class="screen-body">
+      <div id="summary-content"></div>
+      <div class="btn-stack">
+        <button class="btn btn-primary btn-block" id="btn-summary-save" type="button">Speichern</button>
+        <button class="btn btn-secondary btn-block" id="btn-summary-new" type="button">Neuer Lauf</button>
+        <button class="btn btn-ghost btn-block" id="btn-summary-discard" type="button">Verwerfen</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ 6. Lauftagebuch ============ -->
+  <div class="screen" id="screen-log">
+    <header class="app-header">
+      <button class="back-link hidden" id="log-back" type="button" aria-label="Zurück">‹</button>
+      <h1 id="log-title">Lauftagebuch</h1>
+    </header>
+    <main class="screen-body with-nav">
+      <div id="log-list" class="card-list"></div>
+      <div id="log-detail" class="hidden"></div>
+    </main>
+  </div>
+
+  <!-- ============ Navigation ============ -->
+  <nav class="nav-tabs" id="nav-tabs">
+    <button type="button" class="nav-tab" id="tab-plans" data-nav="plans"><span class="nav-icon">📋</span>Pläne</button>
+    <button type="button" class="nav-tab" id="tab-log" data-nav="log"><span class="nav-icon">📓</span>Tagebuch</button>
+  </nav>
+
+  <!-- ============ Dialog + Toast ============ -->
+  <div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <div class="modal-buttons">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Abbrechen</button>
+        <button type="button" class="btn btn-primary" id="modal-ok">OK</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast hidden" id="toast" role="status"></div>
+
+  <input type="file" id="import-file" accept=".json,application/json" class="hidden">
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/plans.js"></script>
+<script src="js/voice.js"></script>
+<script src="js/tracker.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
