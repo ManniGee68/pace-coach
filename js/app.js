@@ -503,6 +503,7 @@
 
     state.pendingLog = log;
     state.pendingSaved = false;
+    StorageManager.savePendingLog(log); // Crash-Sicherung: sofort in localStorage
     renderSummary();
     show('summary');
     Voice.onFinish(Math.round(dist * 100) / 100, totalSec, avgPace);
@@ -586,6 +587,7 @@
     const logs = StorageManager.getLogs();
     logs.unshift(state.pendingLog);
     StorageManager.saveLogs(logs);
+    StorageManager.clearPendingLog();
     state.logs = logs;
     state.pendingSaved = true;
     return true;
@@ -602,6 +604,7 @@
     confirmDialog('Lauf verwerfen?', 'Dieser Lauf wird nicht gespeichert.', 'Verwerfen').then(function (ok) {
       if (!ok) return;
       state.pendingLog = null;
+      StorageManager.clearPendingLog();
       renderPlans();
       show('plans');
     });
@@ -771,9 +774,19 @@
     bind();
     renderPlans();
     renderLog();
-    show('plans');
+    // Crash-Recovery: pendingLog aus localStorage wiederherstellen
+    const recovered = StorageManager.getPendingLog();
+    if (recovered) {
+      state.pendingLog = recovered;
+      state.pendingSaved = false;
+      renderSummary();
+      show('summary');
+      toast('Lauf wiederhergestellt', 'ok');
+    } else {
+      show('plans');
+      handleUrlPlan();
+    }
     $('app-version').textContent = APP_VERSION;
-    handleUrlPlan();
     if (!Voice.isSupported()) {
       setTimeout(function () { toast('Sprachausgabe wird von diesem Browser nicht unterstützt.', 'error'); }, 500);
     }

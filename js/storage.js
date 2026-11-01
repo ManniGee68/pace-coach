@@ -4,6 +4,7 @@
 
   const KEY_PLANS = 'pacecoach_plans';
   const KEY_LOGS = 'pacecoach_logs';
+  const KEY_PENDING_LOG = 'pacecoach_pending_log';
 
   function read(key) {
     try {
@@ -37,7 +38,19 @@
     getPlans() { return read(KEY_PLANS) || []; },
     savePlans(arr) { return write(KEY_PLANS, arr); },
     getLogs() { return read(KEY_LOGS) || []; },
-    saveLogs(arr) { return write(KEY_LOGS, arr); }
+    saveLogs(arr) { return write(KEY_LOGS, arr); },
+    getPendingLog() {
+      try {
+        const raw = localStorage.getItem(KEY_PENDING_LOG);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) { return null; }
+    },
+    savePendingLog(log) {
+      try { localStorage.setItem(KEY_PENDING_LOG, JSON.stringify(log)); } catch (e) {}
+    },
+    clearPendingLog() {
+      try { localStorage.removeItem(KEY_PENDING_LOG); } catch (e) {}
+    }
   };
 
   global.StorageManager = StorageManager;
