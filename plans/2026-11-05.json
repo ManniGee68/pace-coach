@@ -1,6 +1,6 @@
 {
   "id": "plan-2026-11-05",
-  "name": "Tempo Mi 5. Nov",
+  "name": "Tempo Do 5. Nov",
   "createdAt": "2026-10-29",
   "segments": [
     {
@@ -12,13 +12,27 @@
     },
     {
       "id": "seg-2",
-      "name": "2×10 min @ 5:10",
-      "distance": 4.4,
+      "name": "Tempo 1: 10 min @ 5:10",
+      "distance": 1.9,
       "targetPaceMin": 5,
       "targetPaceSec": 10
     },
     {
       "id": "seg-3",
+      "name": "Easy 3 min",
+      "distance": 0.5,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-4",
+      "name": "Tempo 2: 10 min @ 5:10",
+      "distance": 1.9,
+      "targetPaceMin": 5,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-5",
       "name": "Cool-Down 10 min",
       "distance": 1.6,
       "targetPaceMin": 6,
