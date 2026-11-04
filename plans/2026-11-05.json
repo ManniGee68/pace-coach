@@ -1,7 +1,7 @@
 {
   "id": "plan-2026-11-05",
   "name": "Tempo Do 5. Nov",
-  "createdAt": "2026-10-29",
+  "createdAt": "2026-11-04",
   "segments": [
     {
       "id": "seg-1",
@@ -12,7 +12,7 @@
     },
     {
       "id": "seg-2",
-      "name": "Tempo 1: 10 min @ 5:10",
+      "name": "Tempo 1 — 10 min @ 5:10",
       "distance": 1.9,
       "targetPaceMin": 5,
       "targetPaceSec": 10
@@ -26,7 +26,7 @@
     },
     {
       "id": "seg-4",
-      "name": "Tempo 2: 10 min @ 5:10",
+      "name": "Tempo 2 — 10 min @ 5:10",
       "distance": 1.9,
       "targetPaceMin": 5,
       "targetPaceSec": 10
