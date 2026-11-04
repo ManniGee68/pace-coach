@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.4.3';
+  const APP_VERSION = 'v0.4.4';
 
   /* ================= State ================= */
   function freshRun() {
@@ -742,16 +742,12 @@
     });
   }
 
-  /* ================= URL-Plan-Import ================= */
-  // ?plan=2026-11-04 → lädt plans/2026-11-04.json und öffnet Pre-Run direkt
-  function handleUrlPlan() {
-    const slug = new URLSearchParams(window.location.search).get('plan');
-    if (!slug) return;
-    // Schon vorhanden? Dann direkt öffnen
+  /* ================= Plan-Import (URL oder Auto-Heute) ================= */
+  // Lädt plans/<slug>.json von GitHub Pages, speichert in localStorage, öffnet Pre-Run
+  function fetchAndOpenPlan(slug, silent) {
     const existing = state.plans.find(function (p) { return p.id === 'plan-' + slug; });
     if (existing) { openPrerun(existing.id); return; }
-    const url = 'plans/' + slug + '.json';
-    fetch(url)
+    fetch('plans/' + slug + '.json')
       .then(function (r) {
         if (!r.ok) throw new Error('Plan nicht gefunden (' + slug + ')');
         return r.json();
@@ -760,12 +756,26 @@
         PlanManager.save(data);
         state.plans = PlanManager.getAll();
         renderPlans();
-        toast('Plan \u201e' + data.name + '\u201c geladen', 'ok');
+        if (!silent) toast('Plan \u201e' + data.name + '\u201c geladen', 'ok');
         openPrerun(data.id);
       })
       .catch(function (err) {
-        console.warn('URL-Plan-Import:', err);
+        console.warn('Plan-Import:', err);
       });
+  }
+
+  // ?plan=2026-11-04 → expliziter URL-Parameter
+  function handleUrlPlan() {
+    const slug = new URLSearchParams(window.location.search).get('plan');
+    if (!slug) return false;
+    fetchAndOpenPlan(slug, false);
+    return true;
+  }
+
+  // Beim App-Start automatisch heutigen Plan laden (kein URL-Parameter nötig)
+  function autoLoadTodayPlan() {
+    var today = Fmt.todayISO();
+    fetchAndOpenPlan(today, true);
   }
 
   /* ================= Init ================= */
@@ -784,7 +794,9 @@
       toast('Lauf wiederhergestellt', 'ok');
     } else {
       show('plans');
-      handleUrlPlan();
+      if (!handleUrlPlan()) {
+        autoLoadTodayPlan();
+      }
     }
     $('app-version').textContent = APP_VERSION;
     if (!Voice.isSupported()) {
