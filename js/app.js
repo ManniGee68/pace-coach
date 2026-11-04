@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.4.6';
+  const APP_VERSION = 'v0.4.7';
 
   /* ================= State ================= */
   function freshRun() {
@@ -537,7 +537,7 @@
   }
 
   /* ================= Karte (Leaflet) ================= */
-  function renderMap(positions, containerId) {
+  function renderMap(positions, containerId, kmSplits) {
     var el = document.getElementById(containerId);
     if (!el) return;
     if (!positions || positions.length < 2) {
@@ -557,6 +557,41 @@
         attribution: '© OpenStreetMap'
       }).addTo(map);
       var route = L.polyline(latlngs, { color: '#e94560', weight: 4, opacity: 0.95 }).addTo(map);
+
+      // Kilometer-Markierungen: Haversine-Interpolation entlang der gespeicherten Punkte
+      if (typeof Tracker !== 'undefined' && positions.length > 1) {
+        var cumKm = 0;
+        var nextKm = 1;
+        for (var mi = 1; mi < positions.length; mi++) {
+          var p0 = positions[mi - 1];
+          var p1 = positions[mi];
+          var segLen = Tracker.haversineKm(p0.lat, p0.lon, p1.lat, p1.lon);
+          var segStart = cumKm;
+          cumKm += segLen;
+          while (nextKm <= cumKm) {
+            (function (km, s0, s1, sLen, sStart) {
+              var f = sLen > 0 ? Math.min(1, (km - sStart) / sLen) : 0;
+              var mLat = s0.lat + f * (s1.lat - s0.lat);
+              var mLon = s0.lon + f * (s1.lon - s0.lon);
+              var split = kmSplits && kmSplits.find(function (s) { return s.km === km; });
+              var tip = km + ' km' + (split ? ' — ' + Fmt.pace(split.timeSeconds) + '/km' : '');
+              L.marker([mLat, mLon], {
+                icon: L.divIcon({
+                  className: '',
+                  html: '<div style="background:#f4a261;color:#fff;border-radius:50%;' +
+                        'width:22px;height:22px;line-height:22px;text-align:center;' +
+                        'font-size:11px;font-weight:bold;border:2px solid #fff;' +
+                        'box-shadow:0 1px 4px rgba(0,0,0,.5);">' + km + '</div>',
+                  iconSize: [22, 22],
+                  iconAnchor: [11, 11]
+                })
+              }).bindTooltip(tip, { permanent: false, direction: 'top', offset: [0, -13] }).addTo(map);
+            })(nextKm, p0, p1, segLen, segStart);
+            nextKm++;
+          }
+        }
+      }
+
       L.circleMarker(latlngs[0], { radius: 9, color: '#fff', fillColor: '#4ecca3', fillOpacity: 1, weight: 2 })
         .bindTooltip('Start', { permanent: false }).addTo(map);
       L.circleMarker(latlngs[latlngs.length - 1], { radius: 9, color: '#fff', fillColor: '#e94560', fillOpacity: 1, weight: 2 })
@@ -606,7 +641,7 @@
 
   function renderSummary() {
     $('summary-content').innerHTML = '<div id="summary-map" class="run-map"></div>' + resultHTML(state.pendingLog);
-    renderMap(state.pendingLog && state.pendingLog.positions, 'summary-map');
+    renderMap(state.pendingLog && state.pendingLog.positions, 'summary-map', state.pendingLog && state.pendingLog.kmSplits);
   }
 
   function savePendingLog() {
@@ -676,7 +711,7 @@
     d.innerHTML = '<div id="log-map" class="run-map"></div><h2 style="margin:4px 0 12px">' + esc(log.planName) + '</h2>' + resultHTML(log) +
       '<div class="btn-stack"><button type="button" class="btn btn-danger btn-block" data-del-log="' + esc(log.id) + '">🗑 Lauf löschen</button></div>';
     d.classList.remove('hidden');
-    renderMap(log.positions, 'log-map');
+    renderMap(log.positions, 'log-map', log.kmSplits);
     window.scrollTo(0, 0);
   }
 
