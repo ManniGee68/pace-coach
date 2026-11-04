@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.4.4';
+  const APP_VERSION = 'v0.4.5';
 
   /* ================= State ================= */
   function freshRun() {
@@ -743,24 +743,30 @@
   }
 
   /* ================= Plan-Import (URL oder Auto-Heute) ================= */
-  // Lädt plans/<slug>.json von GitHub Pages, speichert in localStorage, öffnet Pre-Run
+  // Lädt plans/<slug>.json immer frisch von GitHub (kein Browser-Cache).
+  // Bei Offline-Fehler: Fallback auf localStorage. So verhält es sich wie eine News-App.
   function fetchAndOpenPlan(slug, silent) {
-    const existing = state.plans.find(function (p) { return p.id === 'plan-' + slug; });
-    if (existing) { openPrerun(existing.id); return; }
-    fetch('plans/' + slug + '.json')
+    fetch('plans/' + slug + '.json', { cache: 'no-cache' })
       .then(function (r) {
         if (!r.ok) throw new Error('Plan nicht gefunden (' + slug + ')');
         return r.json();
       })
       .then(function (data) {
-        PlanManager.save(data);
+        PlanManager.save(data); // überschreibt veraltete localStorage-Version
         state.plans = PlanManager.getAll();
         renderPlans();
         if (!silent) toast('Plan \u201e' + data.name + '\u201c geladen', 'ok');
         openPrerun(data.id);
       })
       .catch(function (err) {
-        console.warn('Plan-Import:', err);
+        // Netzwerk nicht verfügbar → Fallback auf lokalen Cache
+        const existing = state.plans.find(function (p) { return p.id === 'plan-' + slug; });
+        if (existing) {
+          if (!silent) toast('Offline – gespeicherter Plan', 'error');
+          openPrerun(existing.id);
+        } else {
+          console.warn('Plan-Import:', err);
+        }
       });
   }
 
