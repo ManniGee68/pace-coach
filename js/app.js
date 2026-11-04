@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.4.5';
+  const APP_VERSION = 'v0.4.6';
 
   /* ================= State ================= */
   function freshRun() {
@@ -325,18 +325,44 @@
 
   /* ================= Screen 4: Live-Lauf ================= */
   let wakeLock = null;
+  let wakeLockWanted = false; // true solange ein Lauf aktiv ist
+
   function requestWakeLock() {
-    if (!('wakeLock' in navigator)) return;
-    navigator.wakeLock.request('screen').then(function (l) {
-      wakeLock = l;
-      l.addEventListener('release', function () { if (wakeLock === l) wakeLock = null; });
-    }).catch(function () { /* nicht kritisch */ });
+    if (!('wakeLock' in navigator)) {
+      if (state.currentRun.active) {
+        toast('⚠️ Bildschirm-Lock nicht unterstützt — Bildschirm bitte nicht ausschalten!', 'error');
+      }
+      return;
+    }
+    if (wakeLock) return; // bereits aktiv, nichts tun
+    navigator.wakeLock.request('screen')
+      .then(function (l) {
+        wakeLock = l;
+        l.addEventListener('release', function () {
+          wakeLock = null;
+          // Automatisch neu anfordern wenn Lauf läuft und Seite sichtbar
+          if (wakeLockWanted && document.visibilityState === 'visible') {
+            setTimeout(requestWakeLock, 200);
+          }
+        });
+      })
+      .catch(function (err) {
+        console.warn('Wake Lock fehlgeschlagen:', err);
+        if (state.currentRun.active) {
+          toast('⚠️ Bildschirm-Lock fehlgeschlagen — Bildschirm bitte nicht ausschalten!', 'error');
+        }
+      });
   }
+
   function releaseWakeLock() {
+    wakeLockWanted = false; // zuerst: kein Auto-Reacquire mehr
     if (wakeLock) { try { wakeLock.release(); } catch (e) { /* */ } wakeLock = null; }
   }
+
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible' && state.currentRun.active && !wakeLock) requestWakeLock();
+    if (document.visibilityState === 'visible' && state.currentRun.active) {
+      requestWakeLock(); // Guard (wakeLock check) ist in requestWakeLock() eingebaut
+    }
   });
 
   function currentSegment() {
@@ -362,6 +388,7 @@
     setRunStatus('GPS-Signal wird gesucht …');
     updateRunUI();
     show('run');
+    wakeLockWanted = true;
     requestWakeLock();
 
     const ok = Tracker.start(run, plan, {
