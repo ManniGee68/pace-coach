@@ -708,8 +708,14 @@
   }
   function testTelegram() {
     if (typeof TelegramExport === 'undefined') return;
+    // Erst aktuelle Felder speichern, dann testen
+    var token  = $('tg-token').value.trim();
+    var chatId = $('tg-chatid').value.trim();
+    if (!token || !chatId) { toast('Bot Token und Chat ID eingeben', 'error'); return; }
+    TelegramExport.saveConfig(token, chatId);
+    updateSettingsBtn();
     TelegramExport.sendTest(
-      function ()    { toast('✅ Verbindung OK!', 'ok'); },
+      function ()    { toast('✅ Verbindung OK! Export aktiv.', 'ok'); },
       function (err) { toast('❌ ' + err, 'error'); }
     );
   }
@@ -917,7 +923,13 @@
       }
     }
     $('app-version').textContent = APP_VERSION;
-    updateSettingsBtn();
+    // Auto-Setup via URL-Hash (#tg=TOKEN:CHATID)
+    if (typeof TelegramExport !== 'undefined' && TelegramExport.tryAutoSetup()) {
+      updateSettingsBtn();
+      toast('Telegram eingerichtet ✅', 'ok');
+    } else {
+      updateSettingsBtn();
+    }
     if (!Voice.isSupported()) {
       setTimeout(function () { toast('Sprachausgabe wird von diesem Browser nicht unterstützt.', 'error'); }, 500);
     }

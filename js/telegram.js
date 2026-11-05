@@ -76,5 +76,28 @@
     }
   };
 
+  // Auto-Setup via URL-Hash: #tg=TOKEN:CHATID
+  // Wird nach dem Speichern aus der URL entfernt
+  TelegramExport.tryAutoSetup = function () {
+    var hash = window.location.hash;
+    if (!hash || hash.indexOf('tg=') === -1) return false;
+    try {
+      var val = decodeURIComponent(hash.replace(/^#tg=/, ''));
+      var sep = val.lastIndexOf(':');
+      if (sep < 10) return false;
+      var token  = val.substring(0, sep);
+      var chatId = val.substring(sep + 1);
+      if (token.length > 10 && chatId.length > 3) {
+        TelegramExport.saveConfig(token, chatId);
+        // Hash aus URL entfernen (kein Reload, kein Browser-Verlauf)
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  };
+
   global.TelegramExport = TelegramExport;
 })(window);
