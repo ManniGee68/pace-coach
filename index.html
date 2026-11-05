@@ -21,6 +21,7 @@
     <header class="app-header">
       <h1>PaceCoach 🏃 <span class="app-version" id="app-version"></span></h1>
       <button class="btn btn-small btn-ghost" id="btn-import" type="button">⬆ Import</button>
+      <button class="btn btn-small btn-ghost" id="btn-settings" type="button" title="Telegram einrichten">⚙️</button>
     </header>
     <main class="screen-body with-nav">
       <div id="plans-list" class="card-list"></div>
@@ -142,6 +143,27 @@
     <button type="button" class="nav-tab" id="tab-log" data-nav="log"><span class="nav-icon">📓</span>Tagebuch</button>
   </nav>
 
+  <!-- ============ Telegram-Export Einstellungen ============ -->
+  <div class="modal hidden" id="tg-modal">
+    <div class="modal-box">
+      <h2>📤 Telegram-Export</h2>
+      <p>Laufdaten nach jedem Speichern automatisch an Luzi schicken.</p>
+      <label class="field">
+        <span class="field-label">Bot Token</span>
+        <input type="password" id="tg-token" placeholder="1234567890:ABC..." autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--input-bg,#2a2a3e);color:inherit;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:1rem;">
+      </label>
+      <label class="field">
+        <span class="field-label">Chat ID</span>
+        <input type="text" id="tg-chatid" placeholder="8444031985" autocomplete="off" inputmode="numeric" style="width:100%;box-sizing:border-box;background:var(--input-bg,#2a2a3e);color:inherit;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:1rem;">
+      </label>
+      <div class="modal-buttons" style="flex-wrap:wrap;gap:8px;">
+        <button type="button" class="btn btn-secondary" id="tg-modal-test">🧪 Test</button>
+        <button type="button" class="btn btn-primary" id="tg-modal-save">Speichern</button>
+        <button type="button" class="btn btn-ghost" id="tg-modal-close">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ Dialog + Toast ============ -->
   <div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-box">
@@ -160,6 +182,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/telegram.js"></script>
 <script src="js/plans.js"></script>
 <script src="js/voice.js"></script>
 <script src="js/tracker.js"></script>

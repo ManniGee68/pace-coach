@@ -652,6 +652,15 @@
     StorageManager.clearPendingLog();
     state.logs = logs;
     state.pendingSaved = true;
+    // Auto-Export zu Telegram
+    if (typeof TelegramExport !== 'undefined' && TelegramExport.isConfigured()) {
+      const logToSend = state.pendingLog;
+      TelegramExport.send(
+        logToSend,
+        function () { toast('📤 Lauf an Luzi gesendet', 'ok'); },
+        function (err) { toast('⚠️ Telegram: ' + err, 'error'); }
+      );
+    }
     return true;
   }
 
@@ -677,6 +686,38 @@
     state.pendingLog = null;
     renderPlans();
     show('plans');
+  }
+
+  /* ================= Einstellungen (Telegram-Export) ================= */
+  function openSettings() {
+    const cfg = typeof TelegramExport !== 'undefined' ? TelegramExport.getConfig() : {};
+    $('tg-token').value  = cfg.token  || '';
+    $('tg-chatid').value = cfg.chatId || '';
+    $('tg-modal').classList.remove('hidden');
+  }
+  function closeSettings() {
+    $('tg-modal').classList.add('hidden');
+  }
+  function saveSettings() {
+    const token  = $('tg-token').value.trim();
+    const chatId = $('tg-chatid').value.trim();
+    if (typeof TelegramExport !== 'undefined') TelegramExport.saveConfig(token, chatId);
+    updateSettingsBtn();
+    toast('Einstellungen gespeichert ✅', 'ok');
+    closeSettings();
+  }
+  function testTelegram() {
+    if (typeof TelegramExport === 'undefined') return;
+    TelegramExport.sendTest(
+      function ()    { toast('✅ Verbindung OK!', 'ok'); },
+      function (err) { toast('❌ ' + err, 'error'); }
+    );
+  }
+  function updateSettingsBtn() {
+    const configured = typeof TelegramExport !== 'undefined' && TelegramExport.isConfigured();
+    const btn = $('btn-settings');
+    if (btn) btn.title = configured ? 'Telegram: aktiv ✅' : 'Telegram einrichten';
+    btn.textContent = configured ? '📤' : '⚙️';
   }
 
   /* ================= Screen 6: Tagebuch ================= */
@@ -775,6 +816,15 @@
     $('btn-summary-discard').addEventListener('click', summaryDiscard);
     $('btn-summary-new').addEventListener('click', summaryNew);
 
+    // Einstellungen
+    $('btn-settings').addEventListener('click', openSettings);
+    $('tg-modal-close').addEventListener('click', closeSettings);
+    $('tg-modal-save').addEventListener('click', saveSettings);
+    $('tg-modal-test').addEventListener('click', testTelegram);
+    $('tg-modal').addEventListener('click', function (e) {
+      if (e.target === $('tg-modal')) closeSettings();
+    });
+
     // Log
     $('log-list').addEventListener('click', function (e) {
       const card = e.target.closest('[data-log]');
@@ -867,6 +917,7 @@
       }
     }
     $('app-version').textContent = APP_VERSION;
+    updateSettingsBtn();
     if (!Voice.isSupported()) {
       setTimeout(function () { toast('Sprachausgabe wird von diesem Browser nicht unterstützt.', 'error'); }, 500);
     }
