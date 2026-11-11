@@ -1,14 +1,84 @@
 {
   "id": "plan-2026-11-11",
-  "name": "Easy Run Di 11. Nov",
-  "createdAt": "2026-10-29",
+  "name": "Intervall 5×800m Mi 11. Nov",
+  "createdAt": "2026-11-11",
   "segments": [
     {
       "id": "seg-1",
-      "name": "Easy Run 40 min",
-      "distance": 6.7,
-      "targetPaceMin": 5,
-      "targetPaceSec": 58
+      "name": "Warm-Up 15 min",
+      "distance": 2.5,
+      "targetPaceMin": 6,
+      "targetPaceSec": 5
+    },
+    {
+      "id": "seg-2",
+      "name": "Intervall 1 — 800m @ 4:45",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 45
+    },
+    {
+      "id": "seg-3",
+      "name": "Erholung 90 Sek",
+      "distance": 0.25,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-4",
+      "name": "Intervall 2 — 800m @ 4:45",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 45
+    },
+    {
+      "id": "seg-5",
+      "name": "Erholung 90 Sek",
+      "distance": 0.25,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-6",
+      "name": "Intervall 3 — 800m @ 4:45",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 45
+    },
+    {
+      "id": "seg-7",
+      "name": "Erholung 90 Sek",
+      "distance": 0.25,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-8",
+      "name": "Intervall 4 — 800m @ 4:45",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 45
+    },
+    {
+      "id": "seg-9",
+      "name": "Erholung 90 Sek",
+      "distance": 0.25,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-10",
+      "name": "Intervall 5 — 800m @ 4:45",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 45
+    },
+    {
+      "id": "seg-11",
+      "name": "Cool-Down 10 min",
+      "distance": 1.6,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
     }
   ]
 }
