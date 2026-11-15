@@ -1,0 +1,14 @@
+{
+  "id": "plan-2026-11-15",
+  "name": "Mittellanger Lauf So 15. Nov",
+  "createdAt": "2026-11-15",
+  "segments": [
+    {
+      "id": "seg-1",
+      "name": "Mittellanger Lauf 60 min",
+      "distance": 9.9,
+      "targetPaceMin": 6,
+      "targetPaceSec": 5
+    }
+  ]
+}
