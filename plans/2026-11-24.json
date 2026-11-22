@@ -1,0 +1,56 @@
+{
+  "id": "plan-2026-11-24",
+  "name": "Easy + 800m Peaks Di 24. Nov",
+  "createdAt": "2026-11-22",
+  "segments": [
+    {
+      "id": "seg-1",
+      "name": "Warm-Up 15 min",
+      "distance": 2.4,
+      "targetPaceMin": 6,
+      "targetPaceSec": 10
+    },
+    {
+      "id": "seg-2",
+      "name": "Peak 1 — 800m @ 4:50",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 50
+    },
+    {
+      "id": "seg-3",
+      "name": "Trabpause 400m",
+      "distance": 0.4,
+      "targetPaceMin": 6,
+      "targetPaceSec": 30
+    },
+    {
+      "id": "seg-4",
+      "name": "Peak 2 — 800m @ 4:50",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 50
+    },
+    {
+      "id": "seg-5",
+      "name": "Trabpause 400m",
+      "distance": 0.4,
+      "targetPaceMin": 6,
+      "targetPaceSec": 30
+    },
+    {
+      "id": "seg-6",
+      "name": "Peak 3 — 800m @ 4:50",
+      "distance": 0.8,
+      "targetPaceMin": 4,
+      "targetPaceSec": 50
+    },
+    {
+      "id": "seg-7",
+      "name": "Cool-Down 15 min",
+      "distance": 2.4,
+      "targetPaceMin": 6,
+      "targetPaceSec": 15
+    }
+  ]
+}
