@@ -1,6 +1,6 @@
 {
   "id": "plan-2026-11-26",
-  "name": "Easy Run Mi 26. Nov",
+  "name": "Easy Run Do 26. Nov",
   "createdAt": "2026-10-29",
   "segments": [
     {
@@ -8,7 +8,7 @@
       "name": "Easy Run 35 min",
       "distance": 5.7,
       "targetPaceMin": 6,
-      "targetPaceSec": 5
+      "targetPaceSec": 0
     }
   ]
 }
