@@ -1,35 +1,14 @@
 {
   "id": "plan-2026-12-06",
-  "name": "10 km Rennen 🏁 So 6. Dez",
+  "name": "Langer Easy Lauf So 6. Dez",
   "createdAt": "2026-10-29",
   "segments": [
     {
       "id": "seg-1",
-      "name": "Km 1–2: Ruhig @ 5:08",
-      "distance": 2,
-      "targetPaceMin": 5,
+      "name": "Easy Lauf 60 min",
+      "distance": 9.8,
+      "targetPaceMin": 6,
       "targetPaceSec": 8
-    },
-    {
-      "id": "seg-2",
-      "name": "Km 3–7: Renntempo @ 5:02",
-      "distance": 5,
-      "targetPaceMin": 5,
-      "targetPaceSec": 2
-    },
-    {
-      "id": "seg-3",
-      "name": "Km 8–9: Anziehen @ 4:58",
-      "distance": 2,
-      "targetPaceMin": 4,
-      "targetPaceSec": 58
-    },
-    {
-      "id": "seg-4",
-      "name": "Km 10: Alles geben! 💪",
-      "distance": 1,
-      "targetPaceMin": 4,
-      "targetPaceSec": 40
     }
   ]
 }
